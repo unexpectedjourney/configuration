@@ -1,0 +1,29 @@
+{
+    "bootstrapped": true,
+    "in_process_packages": [],
+    "installed_packages": [
+        "A File Icon",
+        "AutoFileName",
+        "Babel",
+        "Babel Snippets",
+        "BracketHighlighter",
+        "cdnjs",
+        "CSS3",
+        "Djaneiro",
+        "Django-Rest-Snippets",
+        "Emmet",
+        "GitGutter",
+        "HTML5",
+        "Inc-Dec-Value",
+        "isort",
+        "JavaScript Snippets",
+        "JsPrettier",
+        "Package Control",
+        "Random Everything",
+        "Sass",
+        "SASS Build",
+        "SideBarEnhancements",
+        "TabsExtra",
+        "Vue Syntax Highlight"
+    ]
+}
