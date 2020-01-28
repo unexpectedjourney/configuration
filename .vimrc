@@ -10,3 +10,6 @@ set number
 set hlsearch
 set ruler
 highlight Comment ctermfg=green
+set encoding=utf-8
+set background=dark
+set t_Co=256
