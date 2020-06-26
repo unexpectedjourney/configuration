@@ -20,12 +20,17 @@
         "isort",
         "JavaScript Snippets",
         "JsPrettier",
+        "Material Theme",
+        "One Half Color Schemes",
         "Package Control",
         "Python PEP8 Autoformat",
         "Random Everything",
+        "rsub",
         "SideBarEnhancements",
+        "SublimeLinter",
         "TabNine",
         "TabsExtra",
+        "Theme - Spacegray",
         "Vue Syntax Highlight"
     ]
 }
