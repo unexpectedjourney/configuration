@@ -20,7 +20,8 @@
         "env",
         "env3",
         "node_modules",
-        "venv"
+        "venv",
+        ".ipynb_checkpoints"
     ],
     "font_options":
     [
@@ -41,14 +42,13 @@
         "CSS",
         "D",
         "Diff",
+        "Emmet",
         "Erlang",
         "Graphviz",
         "Groovy",
         "Haskell",
-        "Java",
-        "LaTeX",
-        "MATLAB",
         "Matlab",
+        "MATLAB",
         "Objective-C",
         "OCaml",
         "Pascal",
@@ -57,7 +57,6 @@
         "Rails",
         "Ruby",
         "Rust",
-        "Scala",
         "TCL",
         "Textile"
     ],
