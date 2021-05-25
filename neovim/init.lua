@@ -35,7 +35,9 @@ paq {'ojroques/nvim-hardline'}
 paq {'justinmk/vim-dirvish'}
 paq {'lervag/vimtex'}
 paq {'tpope/vim-commentary'}
-
+paq {'kyazdani42/nvim-web-devicons'}
+paq {'kyazdani42/nvim-tree.lua'}
+paq {'romgrk/barbar.nvim'}
 -------------------- PLUGIN SETUP --------------------------
 -- bufbar
 require('bufbar').setup {show_bufname = 'visible', show_flags = false}
@@ -67,6 +69,10 @@ map('n', '<leader>gl', fmt('<cmd>term git log --graph --all --format="%s"<CR><cm
 -- hardline
 require('hardline').setup {}
 
+--nvim-comment
+map("n", "<C-\\>", ":Commentary<CR>")
+map("v", "<C-\\>", ":Commentary<CR>")
+
 -- fzf
 map('n', '<leader>/', '<cmd>BLines<CR>')
 map('n', '<leader>f', '<cmd>Files<CR>')
@@ -77,6 +83,13 @@ g['fzf_action'] = {
   ['ctrl-s'] = 'split',
   ['ctrl-v'] = 'vsplit',
 }
+
+-- nvim-tree
+g['nvim_tree_ignore'] = {'.git', 'node_modules', '.cache' }
+map('', '<C-m>', ':NvimTreeToggle<CR>')
+map('', '<leader>m', ':NvimTreeRefresh<CR>')
+map('', '<leader>n', ':NvimTreeFindFile<CR>')
+
 -------------------- OPTIONS -------------------------------
 g['mapleader'] = "\\"
 local indent, width = 4, 80
@@ -116,7 +129,6 @@ map('i', '<C-u>', '<C-g>u<C-u>')  -- Make <C-u> undo-friendly
 map('i', '<C-w>', '<C-g>u<C-w>')  -- Make <C-w> undo-friendly
 
 map('i', 'jj', '<ESC>')
-map('n', '<C-l>', '<cmd>nohlsearch<CR>')
 
 --- <tabs>
 map('n', '<C-w>T', '<cmd>tabclose<CR>')
