@@ -86,6 +86,7 @@ g['fzf_action'] = {
 
 -- nvim-tree
 g['nvim_tree_ignore'] = {'.git', 'node_modules', '.cache' }
+g['nvim_tree_auto_close'] = 1
 map('', '<C-m>', ':NvimTreeToggle<CR>')
 map('', '<leader>m', ':NvimTreeRefresh<CR>')
 map('', '<leader>n', ':NvimTreeFindFile<CR>')
@@ -141,7 +142,7 @@ map('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true})
 map('n', '<C-l>', '<cmd>nohlsearch<CR>') -- Clear highlights
 map('n', '<leader>o', 'm`o<Esc>``')  -- Insert a newline in normal mode
 
--------------------- TREE-SITTER ---------------------------
+------------------- TREE-SITTER ---------------------------
 local ts = require 'nvim-treesitter.configs'
 ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
 
