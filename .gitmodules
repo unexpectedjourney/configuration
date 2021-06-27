@@ -1,0 +1,6 @@
+[submodule "color/one-gnome-terminal"]
+	path = color/one-gnome-terminal
+	url = git@github.com:denysdovhan/one-gnome-terminal.git
+[submodule "color/onehalf"]
+	path = color/onehalf
+	url = git@github.com:sonph/onehalf.git
