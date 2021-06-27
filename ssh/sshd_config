@@ -1,0 +1,5 @@
+AllowUsers antonbabenko root
+AllowTcpForwarding yes
+GatewayPorts yes
+PasswordAuthentication yes
+ChallengeResponseAuthentication no
