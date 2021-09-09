@@ -87,14 +87,15 @@ g['fzf_action'] = {
 -- nvim-tree
 g['nvim_tree_ignore'] = {'.git', 'node_modules', '.cache' }
 g['nvim_tree_auto_close'] = 1
-map('n', '<C-m>', ':NvimTreeToggle<CR>')
-map('n', '<leader>m', ':NvimTreeRefresh<CR>')
-map('n', '<leader>n', ':NvimTreeFindFile<CR>')
+map('', '<C-m>', ':NvimTreeToggle<CR>')
+map('', '<leader>m', ':NvimTreeRefresh<CR>')
+map('', '<leader>n', ':NvimTreeFindFile<CR>')
 
 -------------------- OPTIONS -------------------------------
 g['mapleader'] = "\\"
 local indent, width = 4, 80
--- cmd('let g:nvcode_termcolors=256')
+cmd('let g:nvcode_termcolors=256')
+-- cmd('colorscheme ' .. O.colorscheme)
 cmd 'colorscheme onedark'
 
 opt('b', 'expandtab', true)                           -- Use spaces instead of tabs
@@ -113,9 +114,8 @@ opt('o', 'sidescrolloff', 8 )                         -- Columns of context
 opt('o', 'smartcase', true)                           -- Don't ignore case with capitals
 opt('o', 'splitbelow', true)                          -- Put new windows below current
 opt('o', 'splitright', true)                          -- Put new windows right of current
-opt('o', 'termguicolors', true)                       -- True color support
+opt('o', 'termguicolors', false)                       -- True color support
 opt('o', 'wildmode', 'list:longest')                  -- Command-line completion mode
-opt('o', 'termguicolors', false)
 opt('w', 'colorcolumn', tostring(width))              -- Line length marker
 opt('w', 'cursorline', true)                          -- Highlight cursor line
 opt('w', 'list', true)                                -- Show some invisible characters (tabs...)
@@ -153,7 +153,7 @@ local lspfuzzy = require 'lspfuzzy'
 -- For ccls we use the default settings
 lsp.ccls.setup {}
 -- root_dir is where the LSP server will start: here at the project root otherwise in current folder
-lsp.pyls.setup {root_dir = lsp.util.root_pattern('.git', fn.getcwd())}
+lsp.pylsp.setup {root_dir = lsp.util.root_pattern('.git', fn.getcwd())}
 lspfuzzy.setup {}  -- Make the LSP client use FZF instead of the quickfix list
 
 map('n', '<space>,', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>')
