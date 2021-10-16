@@ -38,6 +38,19 @@ paq {'tpope/vim-commentary'}
 paq {'kyazdani42/nvim-web-devicons'}
 paq {'kyazdani42/nvim-tree.lua'}
 paq {'romgrk/barbar.nvim'}
+paq {
+    'junegunn/goyo.vim', 
+    requires = {'junegunn/limelight.vim', opt = true, event = 'GoyoEnter'},
+    cmd = 'Goyo',
+    config = function()
+      -- Launch Limelight with Goyo
+      cmd [[ augroup GoyoMode ]]
+      cmd [[ autocmd! ]]
+      cmd [[ autocmd User GoyoEnter Limelight ]]
+      cmd [[ autocmd User GoyoLeave Limelight! ]]
+      cmd [[ augroup END ]]
+    end,
+}
 -------------------- PLUGIN SETUP --------------------------
 -- bufbar
 require('bufbar').setup {show_bufname = 'visible', show_flags = false}
@@ -87,15 +100,13 @@ g['fzf_action'] = {
 -- nvim-tree
 g['nvim_tree_ignore'] = {'.git', 'node_modules', '.cache' }
 g['nvim_tree_auto_close'] = 1
-map('', '<C-m>', ':NvimTreeToggle<CR>')
-map('', '<leader>m', ':NvimTreeRefresh<CR>')
-map('', '<leader>n', ':NvimTreeFindFile<CR>')
+map('n', '<C-m>', ':NvimTreeToggle<CR>')
+map('n', '<leader>m', ':NvimTreeRefresh<CR>')
+map('n', '<leader>n', ':NvimTreeFindFile<CR>')
 
 -------------------- OPTIONS -------------------------------
 g['mapleader'] = "\\"
 local indent, width = 4, 80
-cmd('let g:nvcode_termcolors=256')
--- cmd('colorscheme ' .. O.colorscheme)
 cmd 'colorscheme onedark'
 
 opt('b', 'expandtab', true)                           -- Use spaces instead of tabs
@@ -114,8 +125,8 @@ opt('o', 'sidescrolloff', 8 )                         -- Columns of context
 opt('o', 'smartcase', true)                           -- Don't ignore case with capitals
 opt('o', 'splitbelow', true)                          -- Put new windows below current
 opt('o', 'splitright', true)                          -- Put new windows right of current
-opt('o', 'termguicolors', false)                       -- True color support
 opt('o', 'wildmode', 'list:longest')                  -- Command-line completion mode
+opt('o', 'termguicolors', false)
 opt('w', 'colorcolumn', tostring(width))              -- Line length marker
 opt('w', 'cursorline', true)                          -- Highlight cursor line
 opt('w', 'list', true)                                -- Show some invisible characters (tabs...)
