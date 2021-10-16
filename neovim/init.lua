@@ -35,8 +35,11 @@ paq {'ojroques/nvim-hardline'}
 paq {'justinmk/vim-dirvish'}
 paq {'lervag/vimtex'}
 paq {'tpope/vim-commentary'}
-paq {'kyazdani42/nvim-web-devicons'}
-paq {'kyazdani42/nvim-tree.lua'}
+paq {
+    'kyazdani42/nvim-tree.lua',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = function() require'nvim-tree'.setup {} end
+}
 paq {'romgrk/barbar.nvim'}
 paq {
     'junegunn/goyo.vim', 
@@ -98,8 +101,8 @@ g['fzf_action'] = {
 }
 
 -- nvim-tree
+require('nvim-tree').setup {auto_close = true}
 g['nvim_tree_ignore'] = {'.git', 'node_modules', '.cache' }
-g['nvim_tree_auto_close'] = 1
 map('n', '<C-m>', ':NvimTreeToggle<CR>')
 map('n', '<leader>m', ':NvimTreeRefresh<CR>')
 map('n', '<leader>n', ':NvimTreeFindFile<CR>')
