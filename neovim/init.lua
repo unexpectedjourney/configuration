@@ -17,42 +17,44 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -------------------- PLUGINS -------------------------------
-cmd 'packadd paq-nvim'               -- load the package manager
-local paq = require('paq-nvim').paq  -- a convenient alias
-paq {'savq/paq-nvim', opt = true}    -- paq-nvim manages itself
-paq {'airblade/vim-gitgutter'}
-paq {'joshdick/onedark.vim'}
-paq {'shougo/deoplete-lsp'}
-paq {'shougo/deoplete.nvim', run = fn['remote#host#UpdateRemotePlugins']}
-paq {'nvim-treesitter/nvim-treesitter'}
-paq {'neovim/nvim-lspconfig'}
-paq {'junegunn/fzf', run = fn['fzf#install']}
-paq {'junegunn/fzf.vim'}
-paq {'ojroques/nvim-lspfuzzy'}
-paq {'ojroques/nvim-bufbar'}
-paq {'ojroques/nvim-bufdel'}
-paq {'ojroques/nvim-hardline'}
-paq {'justinmk/vim-dirvish'}
-paq {'lervag/vimtex'}
-paq {'tpope/vim-commentary'}
-paq {
-    'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function() require'nvim-tree'.setup {} end
-}
-paq {'romgrk/barbar.nvim'}
-paq {
-    'junegunn/goyo.vim', 
-    requires = {'junegunn/limelight.vim', opt = true, event = 'GoyoEnter'},
-    cmd = 'Goyo',
-    config = function()
-      -- Launch Limelight with Goyo
-      cmd [[ augroup GoyoMode ]]
-      cmd [[ autocmd! ]]
-      cmd [[ autocmd User GoyoEnter Limelight ]]
-      cmd [[ autocmd User GoyoLeave Limelight! ]]
-      cmd [[ augroup END ]]
-    end,
+local paq_dir = fmt('%s/site/pack/paqs/start/paq-nvim', fn.stdpath('data'))
+if fn.empty(fn.glob(paq_dir)) > 0 then
+  fn.system({'git', 'clone', '--depth=1', 'https://github.com/savq/paq-nvim.git', paq_dir})
+end
+
+require 'paq' {
+    {'savq/paq-nvim', opt = true},    -- paq-nvim manages itself
+    {'airblade/vim-gitgutter'},
+    {'joshdick/onedark.vim'},
+    {'shougo/deoplete-lsp'},
+    {'shougo/deoplete.nvim', run = fn['remote#host#UpdateRemotePlugins']},
+    {'nvim-treesitter/nvim-treesitter'},
+    {'nvim-treesitter/nvim-treesitter-textobjects'},
+    {'neovim/nvim-lspconfig'},
+    {'junegunn/fzf', run = fn['fzf#install']},
+    {'junegunn/fzf.vim'},
+    {'ojroques/nvim-lspfuzzy'},
+    {'ojroques/nvim-bufbar'},
+    {'ojroques/nvim-bufdel'},
+    {'ojroques/nvim-hardline'},
+    -- {'ojroques/vim-oscyank'},
+    {'justinmk/vim-dirvish'},
+    {'kyazdani42/nvim-web-devicons'},
+    {'tpope/vim-commentary'},
+    {'romgrk/barbar.nvim'},
+    {
+        'junegunn/goyo.vim', 
+        requires = {'junegunn/limelight.vim', opt = true, event = 'GoyoEnter'},
+        cmd = 'Goyo',
+        config = function()
+        -- Launch Limelight with Goyo
+        cmd [[ augroup GoyoMode ]]
+        cmd [[ autocmd! ]]
+        cmd [[ autocmd User GoyoEnter Limelight ]]
+        cmd [[ autocmd User GoyoLeave Limelight! ]]
+        cmd [[ augroup END ]]
+        end,
+    },
 }
 -------------------- PLUGIN SETUP --------------------------
 -- bufbar
@@ -61,11 +63,6 @@ require('bufbar').setup {show_bufname = 'visible', show_flags = false}
 -- bufdel
 map('n', '<leader>w', '<cmd>BufDel<CR>')
 require('bufdel').setup {next = 'alternate'}
-
--- vimtex
-g['vimtex_quickfix_mode'] = 0
-g['vimtex_view_method'] = 'zathura'
-cmd 'au VimEnter * call deoplete#custom#var("omni", "input_patterns", {"tex": g:vimtex#re#deoplete})'
 
 -- deoplete
 g['deoplete#enable_at_startup'] = 1
@@ -100,13 +97,27 @@ g['fzf_action'] = {
   ['ctrl-v'] = 'vsplit',
 }
 
--- nvim-tree
-require('nvim-tree').setup {auto_close = true}
-g['nvim_tree_ignore'] = {'.git', 'node_modules', '.cache' }
-map('n', '<C-m>', ':NvimTreeToggle<CR>')
-map('n', '<leader>m', ':NvimTreeRefresh<CR>')
-map('n', '<leader>n', ':NvimTreeFindFile<CR>')
-
+-- tree-sitter
+require('nvim-treesitter.configs').setup {
+  ensure_installed = 'maintained',
+  highlight = {enable = true},
+  textobjects = {
+    select = {
+      enable = true,
+      keymaps = {
+        ['aa'] = '@parameter.outer', ['ia'] = '@parameter.inner',
+        ['af'] = '@function.outer', ['if'] = '@function.inner',
+      },
+    },
+    move = {
+      enable = true,
+      goto_next_start = {[']a'] = '@parameter.outer', [']f'] = '@function.outer'},
+      goto_next_end = {[']A'] = '@parameter.outer', [']F'] = '@function.outer'},
+      goto_previous_start = {['[a'] = '@parameter.outer', ['[f'] = '@function.outer'},
+      goto_previous_end = {['[A'] = '@parameter.outer', ['[F'] = '@function.outer'},
+    },
+  },
+}
 -------------------- OPTIONS -------------------------------
 g['mapleader'] = "\\"
 local indent, width = 4, 80
@@ -181,4 +192,14 @@ map('n', '<space>r', '<cmd>lua vim.lsp.buf.references()<CR>')
 map('n', '<space>s', '<cmd>lua vim.lsp.buf.document_symbol()<CR>')
 
 -------------------- COMMANDS ------------------------------
-cmd 'au TextYankPost * lua vim.highlight.on_yank {on_visual = false}'  -- disabled in visual mode
+function init_term()
+  cmd 'setlocal nonumber norelativenumber'
+  cmd 'setlocal nospell'
+  cmd 'setlocal signcolumn=auto'
+end
+
+vim.tbl_map(function(c) cmd(fmt('autocmd %s', c)) end, {
+  'TermOpen * lua init_term()',
+  'TextYankPost * if v:event.operator is "y" && v:event.regname is "+" | execute "OSCYankReg +" | endif',
+  'TextYankPost * lua vim.highlight.on_yank {timeout = 200, on_visual = false}',
+})
