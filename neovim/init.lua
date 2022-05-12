@@ -99,7 +99,7 @@ g['fzf_action'] = {
 
 -- tree-sitter
 require('nvim-treesitter.configs').setup {
-  ensure_installed = 'maintained',
+  ensure_installed = 'all',
   highlight = {enable = true},
   textobjects = {
     select = {
@@ -169,7 +169,7 @@ map('n', '<leader>o', 'm`o<Esc>``')  -- Insert a newline in normal mode
 
 ------------------- TREE-SITTER ---------------------------
 local ts = require 'nvim-treesitter.configs'
-ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
+ts.setup {ensure_installed = 'all', highlight = {enable = true}}
 
 -------------------- LSP -----------------------------------
 local lsp = require 'lspconfig'
