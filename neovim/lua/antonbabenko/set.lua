@@ -25,4 +25,5 @@ vim.opt.number = true                              -- Print line number
 vim.opt.relativenumber = true                      -- Relative line numbers
 vim.opt.signcolumn = 'yes'                         -- Show sign column
 vim.opt.wrap = false                               -- Disable line wrap
-
+vim.opt.swapfile = false
+vim.opt.backup = false
