@@ -1,0 +1,322 @@
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Setup lazy.nvim
+require("lazy").setup({
+  {
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.8',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local builtin = require('telescope.builtin')
+      local actions = require("telescope.actions")
+
+      require("telescope").setup({
+        defaults = {
+          mappings = {
+            i = {
+              ["<esc>"] = actions.close,
+            },
+          },
+        },
+      })
+
+      -- Keymaps
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+      vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+      vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+      vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+    end
+  },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    config = function()
+        vim.cmd("colorscheme catppuccin-mocha")
+    end,
+    priority = 1000
+  },
+  -- {
+  --   "nvim-treesitter/nvim-treesitter",
+  --   dependencies = {
+  --     "nvim-treesitter/nvim-treesitter-textobjects",
+  --   },
+  --   build = ":TSUpdate",
+  --   config = function()
+  --     require'nvim-treesitter.configs'.setup {
+  --       -- Install parsers synchronously (only applied to `ensure_installed`)
+  --       sync_install = false,
+        
+  --       -- Automatically install missing parsers when entering buffer
+  --       auto_install = true,
+        
+  --       -- Install only a specific set of parsers instead of 'all'
+  --       ensure_installed = {
+  --         "c", "lua", "vim", "vimdoc", "query", "python", "javascript", 
+  --         "typescript", "html", "css", "json", "yaml", "bash", "markdown",
+  --         "markdown_inline"
+  --       },
+        
+  --       highlight = {
+  --         enable = true,
+  --         -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+  --         -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+  --         -- Using this option may slow down your editor, and you may see some duplicate highlights.
+  --         -- Instead of true it can also be a list of languages
+  --         additional_vim_regex_highlighting = false,
+  --       },
+        
+  --       textobjects = {
+  --         select = {
+  --           enable = true,
+  --           -- Automatically jump forward to textobj, similar to targets.vim
+  --           lookahead = true,
+  --           keymaps = {
+  --             ['aa'] = '@parameter.outer', 
+  --             ['ia'] = '@parameter.inner',
+  --             ['af'] = '@function.outer', 
+  --             ['if'] = '@function.inner',
+  --           },
+  --         },
+  --         move = {
+  --           enable = true,
+  --           set_jumps = true, -- whether to set jumps in the jumplist
+  --           goto_next_start = {
+  --             [']a'] = '@parameter.outer', 
+  --             [']f'] = '@function.outer'
+  --           },
+  --           goto_next_end = {
+  --             [']A'] = '@parameter.outer', 
+  --             [']F'] = '@function.outer'
+  --           },
+  --           goto_previous_start = {
+  --             ['[a'] = '@parameter.outer', 
+  --             ['[f'] = '@function.outer'
+  --           },
+  --           goto_previous_end = {
+  --             ['[A'] = '@parameter.outer', 
+  --             ['[F'] = '@function.outer'
+  --           },
+  --         },
+  --       },
+  --     }
+  --   end
+  -- },
+  {
+    "tpope/vim-commentary"
+  },
+  -- LSP Configuration
+  {
+    'williamboman/mason.nvim',
+    config = function()
+      require('mason').setup()
+    end
+  },
+  {
+    'williamboman/mason-lspconfig.nvim',
+    dependencies = { 'williamboman/mason.nvim' },
+    config = function()
+      require('mason-lspconfig').setup({
+        ensure_installed = { 'pylsp', 'clangd', 'lua_ls' }
+      })
+    end
+  },
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = { 
+      'williamboman/mason-lspconfig.nvim',
+      'hrsh7th/cmp-nvim-lsp'
+    },
+    config = function()
+      local lspconfig = require('lspconfig')
+      local cmp_nvim_lsp = require('cmp_nvim_lsp')
+
+      -- Setup capabilities for completion
+      local capabilities = cmp_nvim_lsp.default_capabilities()
+
+      -- Common on_attach function
+      local on_attach = function(client, bufnr)
+        local opts = {buffer = bufnr, remap = false}
+
+        vim.keymap.set('n', '<space>,', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+        vim.keymap.set('n', '<space>;', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+        vim.keymap.set('n', '<space>a', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        vim.keymap.set('n', '<space>d', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        vim.keymap.set('n', '<space>f', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+        vim.keymap.set('n', '<space>h', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        vim.keymap.set('n', '<space>m', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        vim.keymap.set('n', '<space>r', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        vim.keymap.set('n', '<space>s', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
+      end
+
+      -- Setup servers
+      lspconfig.pylsp.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      lspconfig.clangd.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      lspconfig.lua_ls.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = { 'vim' }
+            }
+          }
+        }
+      })
+      
+      -- Setup diagnostic signs
+      local signs = { Error = "E", Warn = "W", Hint = "H", Info = "I" }
+      for type, icon in pairs(signs) do
+        local hl = "DiagnosticSign" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+      end
+      
+      vim.diagnostic.config({
+        -- keep the virtual-text line you already had
+        virtual_text = true,
+
+        -- NEW: define sign column text without using sign_define()
+        signs = {
+          text = {
+          [vim.diagnostic.severity.ERROR] = "E",
+          [vim.diagnostic.severity.WARN]  = "W",
+          [vim.diagnostic.severity.INFO]  = "I",
+          [vim.diagnostic.severity.HINT]  = "H",
+          },
+          -- optional: you can still customise line-/num-highlights here
+          -- linehl = { [vim.diagnostic.severity.ERROR] = "ErrorMsg" },
+          -- numhl  = { [vim.diagnostic.severity.WARN]  = "WarningMsg" },
+        },
+    })
+    end
+  },
+  
+  -- Completion
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lua',
+      'saadparwaiz1/cmp_luasnip',
+      'L3MON4D3/LuaSnip',
+      'rafamadriz/friendly-snippets',
+    },
+    config = function()
+      local cmp = require('cmp')
+      local luasnip = require('luasnip')
+      
+      -- Load friendly snippets
+      require('luasnip.loaders.from_vscode').lazy_load()
+      
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          { name = 'nvim_lua' },
+        }, {
+          { name = 'buffer' },
+          { name = 'path' },
+        })
+      })
+    end
+  },
+  
+  {
+    'ojroques/nvim-osc52',
+    config = function()
+      require('osc52').setup {trim = true}
+
+      local function copy(lines, _)
+        require('osc52').copy(table.concat(lines, '\n'))
+      end
+
+      local function paste()
+        return {vim.fn.split(vim.fn.getreg(''), '\n'), vim.fn.getregtype('')}
+      end
+
+      vim.g.clipboard = {
+        name = 'osc52',
+        copy = {['+'] = copy, ['*'] = copy},
+        paste = {['+'] = paste, ['*'] = paste},
+      }
+
+      -- Keymaps
+      vim.keymap.set('n', '<leader>c', '"+y')
+      vim.keymap.set('n', '<leader>cc', '"+yy')
+      vim.keymap.set('v', '<leader>c', require('osc52').copy_visual)
+    end
+  },
+  
+  {
+    'ojroques/nvim-bufbar',
+    config = function()
+      require('bufbar').setup {modifier = 'full', term_modifier = 'full', show_flags = false}
+    end
+  },
+  
+  {
+    'ojroques/nvim-bufdel',
+    config = function()
+      require('bufdel').setup {next = 'alternate', quit = false}
+      vim.keymap.set('n', '<leader>w', '<cmd>BufDel<CR>')
+    end
+  },
+  
+  {
+    'ojroques/nvim-hardline',
+    config = function()
+      require('hardline').setup {}
+    end
+  }
+})
