@@ -17,7 +17,6 @@ vim.opt.smartcase = true                           -- Don't ignore case with cap
 vim.opt.splitbelow = true                          -- Put new windows below current
 vim.opt.splitright = true                          -- Put new windows right of current
 vim.opt.wildmode = 'list:longest'                  -- Command-line completion mode
--- vim.opt.termguicolors = false
 vim.opt.termguicolors = true
 vim.opt.colorcolumn = tostring(width)              -- Line length marker
 vim.opt.cursorline = true                          -- Highlight cursor line
@@ -28,4 +27,5 @@ vim.opt.signcolumn = 'yes'                         -- Show sign column
 vim.opt.wrap = false                               -- Disable line wrap
 vim.opt.swapfile = false
 vim.opt.backup = false
+vim.opt.clipboard = { "unnamed", "unnamedplus" }
 

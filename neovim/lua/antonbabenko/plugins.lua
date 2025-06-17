@@ -1,208 +1,296 @@
 -----------------------------------------------------------------------
--- BOOTSTRAP lazy.nvim ------------------------------------------------
+-- 1. Bootstrap lazy.nvim --------------------------------------------
 -----------------------------------------------------------------------
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git", "clone", "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", lazypath,
-  })
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable",
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
 -----------------------------------------------------------------------
--- PLUGIN SPEC --------------------------------------------------------
+-- 2. Plugin specification -------------------------------------------
 -----------------------------------------------------------------------
 require("lazy").setup({
 
-  ---------------------------------------------------------------------
-  -- Telescope --------------------------------------------------------
-  ---------------------------------------------------------------------
-  {
-    "nvim-telescope/telescope.nvim",
-    tag         = "0.1.8",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      local builtin = require("telescope.builtin")
-      local actions = require("telescope.actions")
+	---------------------------------------------------------------------
+	-- Telescope --------------------------------------------------------
+	---------------------------------------------------------------------
+	{
+		"nvim-telescope/telescope.nvim",
+		tag = "0.1.8",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{
+				"nvim-telescope/telescope-fzf-native.nvim",
+				build = "make",
+				cond = vim.fn.executable("make") == 1,
+			},
+		},
+		config = function()
+			local telescope = require("telescope")
+			local builtin = require("telescope.builtin")
+			local actions = require("telescope.actions")
 
-      require("telescope").setup({
-        defaults = { mappings = { i = { ["<esc>"] = actions.close } } },
-      })
+			telescope.setup({
+				defaults = { mappings = { i = { ["<esc>"] = actions.close } } },
+			})
+			pcall(telescope.load_extension, "fzf")
 
-      vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
-      vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
-      vim.keymap.set("n", "<leader>fb", builtin.buffers,   {})
-      vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
-    end,
-  },
+			vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+			vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+			vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
+			vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+		end,
+	},
 
-  ---------------------------------------------------------------------
-  -- Colourscheme -----------------------------------------------------
-  ---------------------------------------------------------------------
-  {
-    "catppuccin/nvim",
-    name     = "catppuccin",
-    priority = 1000,
-    config   = function()
-      vim.cmd("colorscheme catppuccin-mocha")
-    end,
-  },
+	---------------------------------------------------------------------
+	-- Catppuccin colourscheme -----------------------------------------
+	---------------------------------------------------------------------
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			vim.cmd.colorscheme("catppuccin-mocha")
+		end,
+	},
 
-  ---------------------------------------------------------------------
-  -- Treesitter -------------------------------------------------------
-  ---------------------------------------------------------------------
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build        = ":TSUpdate",
-    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "bash","c","lua","vim","python","javascript","typescript",
-          "html","css","json","yaml","markdown","markdown_inline",
-        },
-        highlight   = { enable = true },
-        textobjects = {
-          select = {
-            enable  = true,
-            keymaps = {
-              ["aa"] = "@parameter.outer", ["ia"] = "@parameter.inner",
-              ["af"] = "@function.outer",  ["if"] = "@function.inner",
-            },
-          },
-          move = {
-            enable = true,
-            goto_next_start = { ["]a"] = "@parameter.outer", ["]f"] = "@function.outer" },
-            goto_next_end   = { ["]A"] = "@parameter.outer", ["]F"] = "@function.outer" },
-            goto_prev_start = { ["[a"] = "@parameter.outer", ["[f"] = "@function.outer" },
-            goto_prev_end   = { ["[A"] = "@parameter.outer", ["[F"] = "@function.outer" },
-          },
-        },
-      })
-    end,
-  },
+	---------------------------------------------------------------------
+	-- Treesitter -------------------------------------------------------
+	---------------------------------------------------------------------
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"bash",
+					"c",
+					"lua",
+					"vim",
+					"python",
+					"javascript",
+					"typescript",
+					"html",
+					"css",
+					"json",
+					"yaml",
+					"markdown",
+					"markdown_inline",
+				},
+				highlight = { enable = true },
+				textobjects = {
+					select = {
+						enable = true,
+						keymaps = {
+							["aa"] = "@parameter.outer",
+							["ia"] = "@parameter.inner",
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+						},
+					},
+					move = {
+						enable = true,
+						goto_next_start = { ["]a"] = "@parameter.outer", ["]f"] = "@function.outer" },
+						goto_next_end = { ["]A"] = "@parameter.outer", ["]F"] = "@function.outer" },
+						goto_prev_start = { ["[a"] = "@parameter.outer", ["[f"] = "@function.outer" },
+						goto_prev_end = { ["[A"] = "@parameter.outer", ["[F"] = "@function.outer" },
+					},
+				},
+			})
+		end,
+	},
 
-  ---------------------------------------------------------------------
-  -- Commenting -------------------------------------------------------
-  ---------------------------------------------------------------------
-  { "tpope/vim-commentary", event = "VeryLazy" },
+	{ "tpope/vim-commentary", event = "VeryLazy" },
 
-  ---------------------------------------------------------------------
-  -- LSP / Completion (lsp-zero v1) ----------------------------------
-  ---------------------------------------------------------------------
-  {
-    "VonHeikemen/lsp-zero.nvim",
-    branch = "v1.x",
-    lazy   = false,
-    dependencies = {
-      -- LSP core
-      "neovim/nvim-lspconfig",
-      "williamboman/mason.nvim",
-      { "williamboman/mason-lspconfig.nvim", version = "1.*" }, -- ← pin to v1
-      -- Completion
-      "hrsh7th/nvim-cmp",         "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",       "hrsh7th/cmp-path",
-      "saadparwaiz1/cmp_luasnip", "hrsh7th/cmp-nvim-lua",
-      -- Snippets
-      "L3MON4D3/LuaSnip", "rafamadriz/friendly-snippets",
-    },
-    config = function()
-      -----------------------------------------------------------------
-      -- basic lsp-zero setup ----------------------------------------
-      -----------------------------------------------------------------
-      local lsp = require("lsp-zero").preset("recommended")
+	---------------------------------------------------------------------
+	-- Mason + LSP ------------------------------------------------------
+	---------------------------------------------------------------------
+	{ "williamboman/mason.nvim", build = ":MasonUpdate", config = true },
 
-      lsp.ensure_installed({ "pylsp", "clangd", "lua_ls" })
+	{
+		"williamboman/mason-lspconfig.nvim",
+		version = "^2",
+		dependencies = { "neovim/nvim-lspconfig", "hrsh7th/cmp-nvim-lsp" },
+		config = function()
+			-- 1. capabilities ----------------------------------------------------
+			local capabilities = vim.tbl_deep_extend(
+				"force",
+				vim.lsp.protocol.make_client_capabilities(),
+				require("cmp_nvim_lsp").default_capabilities()
+			)
 
-      -- use the modern name 'lua_ls'
-      lsp.configure("lua_ls", {
-        settings = {
-          Lua = {
-            diagnostics = { globals = { "vim" } },
-            workspace   = { checkThirdParty = false },
-          },
-        },
-      })
+			-- 2. on_attach -------------------------------------------------------
+			local function on_attach(client, bufnr) -- <-- keep client!
+				local map, opts = vim.keymap.set, { buffer = bufnr, silent = true }
 
-      lsp.set_preferences({
-        suggest_lsp_servers = false,
-        sign_icons = { error = "E", warn = "W", hint = "H", info = "I" },
-      })
+				map("n", "<space>,", vim.diagnostic.goto_prev, opts)
+				map("n", "<space>;", vim.diagnostic.goto_next, opts)
+				map("n", "<space>a", vim.lsp.buf.code_action, opts)
+				map("n", "<space>d", vim.lsp.buf.definition, opts)
+				map("n", "<space>h", vim.lsp.buf.hover, opts)
+				map("n", "<space>m", vim.lsp.buf.rename, opts)
+				map("n", "<space>r", vim.lsp.buf.references, opts)
+				map("n", "<space>s", vim.lsp.buf.document_symbol, opts)
+				map("n", "<leader>F", vim.lsp.buf.format, opts)
+			end
 
-      lsp.on_attach(function(_, bufnr)
-        local map  = vim.keymap.set
-        local opts = { buffer = bufnr, remap = false }
+			-- 3. servers ---------------------------------------------------------
+			local servers = {
+				lua_ls = {
+					settings = {
+						Lua = {
+							diagnostics = { globals = { "vim" } },
+							workspace = { checkThirdParty = false },
+						},
+					},
+				},
+				clangd = {},
+				pylsp = {},
+			}
 
-        map("n", "<space>,", vim.diagnostic.goto_prev,      opts)
-        map("n", "<space>;", vim.diagnostic.goto_next,      opts)
-        map("n", "<space>a", vim.lsp.buf.code_action,       opts)
-        map("n", "<space>d", vim.lsp.buf.definition,        opts)
-        map("n", "<space>f", vim.lsp.buf.format,            opts)
-        map("n", "<space>h", vim.lsp.buf.hover,             opts)
-        map("n", "<space>m", vim.lsp.buf.rename,            opts)
-        map("n", "<space>r", vim.lsp.buf.references,        opts)
-        map("n", "<space>s", vim.lsp.buf.document_symbol,   opts)
-      end)
+			require("mason-lspconfig").setup({
+				ensure_installed = vim.tbl_keys(servers),
+				automatic_enable = true,
+			})
 
-      lsp.setup()
-      vim.diagnostic.config({ virtual_text = true })
-    end,
-  },
+			local lspconfig = require("lspconfig")
+			for name, opts in pairs(servers) do
+				opts.capabilities = capabilities
+				opts.on_attach = on_attach
+				lspconfig[name].setup(opts)
+			end
 
-  ---------------------------------------------------------------------
-  -- OSC-52 clipboard -------------------------------------------------
-  ---------------------------------------------------------------------
-  {
-    "ojroques/nvim-osc52",
-    config = function()
-      require("osc52").setup({ trim = true })
+			-- 4. diagnostics look ----------------------------------------------
+			vim.diagnostic.config({
+				virtual_text = true,
+				signs = {
+					text = {
+						[vim.diagnostic.severity.ERROR] = "E",
+						[vim.diagnostic.severity.WARN] = "W",
+						[vim.diagnostic.severity.INFO] = "I",
+						[vim.diagnostic.severity.HINT] = "H",
+					},
+				},
+			})
+		end,
+	},
 
-      local function copy(lines, _)
-        require("osc52").copy(table.concat(lines, "\n"))
-      end
-      local function paste()
-        return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
-      end
+	---------------------------------------------------------------------
+	-- Completion -------------------------------------------------------
+	---------------------------------------------------------------------
+	{
+		"hrsh7th/nvim-cmp",
+		dependencies = {
+			"L3MON4D3/LuaSnip",
+			"rafamadriz/friendly-snippets",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"saadparwaiz1/cmp_luasnip",
+			"hrsh7th/cmp-nvim-lua",
+			"hrsh7th/cmp-nvim-lsp",
+		},
+		config = function()
+			local cmp, luasnip = require("cmp"), require("luasnip")
+			require("luasnip.loaders.from_vscode").lazy_load()
 
-      vim.g.clipboard = {
-        name  = "osc52",
-        copy  = { ["+"] = copy, ["*"] = copy },
-        paste = { ["+"] = paste, ["*"] = paste },
-      }
+			cmp.setup({
+				snippet = {
+					expand = function(a)
+						luasnip.lsp_expand(a.body)
+					end,
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<C-b>"] = cmp.mapping.scroll_docs(-4),
+					["<C-f>"] = cmp.mapping.scroll_docs(4),
+					["<C-e>"] = cmp.mapping.abort(),
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
+					["<Tab>"] = cmp.mapping(function(fb)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.expand_or_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fb()
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fb)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fb()
+						end
+					end, { "i", "s" }),
+				}),
+				sources = cmp.config.sources(
+					{ { name = "nvim_lsp" }, { name = "luasnip" }, { name = "nvim_lua" } },
+					{ { name = "buffer" }, { name = "path" } }
+				),
+			})
+		end,
+	},
 
-      vim.keymap.set("n", "<leader>c", '"+y')
-      vim.keymap.set("n", "<leader>cc", '"+yy')
-      vim.keymap.set("v", "<leader>c", require("osc52").copy_visual)
-    end,
-  },
+	---------------------------------------------------------------------
+	-- Formatter / linter bridge ---------------------------------------
+	---------------------------------------------------------------------
+	{
+		"nvimtools/none-ls.nvim",
+		event = "VeryLazy",
+		config = function()
+			local nls = require("null-ls") -- module name is still 'null-ls'
+			nls.setup({
+				sources = {
+					nls.builtins.formatting.stylua,
+					nls.builtins.formatting.black,
+					nls.builtins.diagnostics.ruff,
+					nls.builtins.formatting.isort,
+					nls.builtins.formatting.clang_format,
+				},
+			})
+		end,
+	},
+	{
+		"jay-babu/mason-null-ls.nvim",
+		event = "VeryLazy",
+		dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
+		opts = {
+			automatic_installation = true,
+			ensure_installed = { "stylua", "black", "ruff", "isort", "clang-format" },
+		},
+	},
 
-  ---------------------------------------------------------------------
-  -- Buffer helpers ---------------------------------------------------
-  ---------------------------------------------------------------------
-  {
-    "ojroques/nvim-bufbar",
-    config = function()
-      require("bufbar").setup({
-        modifier      = "full",
-        term_modifier = "full",
-        show_flags    = false,
-      })
-    end,
-  },
-  {
-    "ojroques/nvim-bufdel",
-    config = function()
-      require("bufdel").setup({ next = "alternate", quit = false })
-      vim.keymap.set("n", "<leader>w", "<cmd>BufDel<CR>")
-    end,
-  },
-  {
-    "ojroques/nvim-hardline",
-    config = function()
-      require("hardline").setup({})
-    end,
-  },
+	---------------------------------------------------------------------
+	-- Buffer helpers & statusline -------------------------------------
+	---------------------------------------------------------------------
+	{
+		"ojroques/nvim-bufbar",
+		config = function()
+			require("bufbar").setup({ modifier = "full", term_modifier = "full", show_flags = false })
+		end,
+	},
+	{
+		"ojroques/nvim-bufdel",
+		config = function()
+			require("bufdel").setup({ next = "alternate", quit = false })
+			vim.keymap.set("n", "<leader>w", "<cmd>BufDel<CR>")
+		end,
+	},
+	{
+		"ojroques/nvim-hardline",
+		config = function()
+			require("hardline").setup({})
+		end,
+	},
 })
-
