@@ -13,3 +13,10 @@ vim.keymap.set('n', '<C-w>T', '<cmd>tabclose<CR>')
 
 vim.keymap.set({ "n", "v" }, "<leader>c", '"+y')   -- copy selection / line
 vim.keymap.set("n", "<leader>cc", '"+yy')  -- copy single line
+
+-- Delete to black hole register with <leader>d
+vim.keymap.set('n', '<leader>d', '"_d', { desc = 'Delete to black hole' })
+vim.keymap.set('n', '<leader>dd', '"_dd', { desc = 'Delete line to black hole' })
+vim.keymap.set('n', '<leader>D', '"_D', { desc = 'Delete to EOL to black hole' })
+vim.keymap.set('v', '<leader>d', '"_d', { desc = 'Delete to black hole' })
+vim.keymap.set('x', '<leader>d', '"_d', { desc = 'Delete to black hole' })
