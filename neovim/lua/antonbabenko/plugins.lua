@@ -141,7 +141,7 @@ require("lazy").setup({
 				map("n", "<space>m", vim.lsp.buf.rename, opts)
 				map("n", "<space>r", vim.lsp.buf.references, opts)
 				map("n", "<space>s", vim.lsp.buf.document_symbol, opts)
-				map("n", "<leader>F", vim.lsp.buf.format, opts)
+				map("n", "<leader>f", vim.lsp.buf.format, opts)
 			end
 
 			-- 3. servers ---------------------------------------------------------
