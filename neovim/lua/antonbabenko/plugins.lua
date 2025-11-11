@@ -51,17 +51,29 @@ require("lazy").setup({
 	},
 
 	---------------------------------------------------------------------
-	-- Catppuccin colourscheme -----------------------------------------
+	-- colourscheme -----------------------------------------
 	---------------------------------------------------------------------
-	{
-		"catppuccin/nvim",
-		name = "catppuccin",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			vim.cmd.colorscheme("catppuccin-mocha")
-		end,
-	},
+	-- {
+	-- 	"catppuccin/nvim",
+	-- 	name = "catppuccin",
+	-- 	lazy = false,
+	-- 	priority = 1000,
+	-- 	config = function()
+	-- 		vim.cmd.colorscheme("catppuccin-mocha")
+	-- 	end,
+	-- },
+    {
+        "vague-theme/vague.nvim",
+        lazy = false, -- make sure we load this during startup if it is your main colorscheme
+        priority = 1000, -- make sure to load this before all the other plugins
+        config = function()
+            -- NOTE: you do not need to call setup if you don't want to.
+            require("vague").setup({
+                -- optional configuration here
+            })
+            vim.cmd("colorscheme vague")
+        end
+    },
 
 	---------------------------------------------------------------------
 	-- Treesitter -------------------------------------------------------
