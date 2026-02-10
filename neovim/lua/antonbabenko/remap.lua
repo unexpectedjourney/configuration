@@ -10,3 +10,5 @@ vim.keymap.set('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = tru
 
 vim.keymap.set('n', '<C-w>t', '<cmd>tabnew<CR>')
 vim.keymap.set('n', '<C-w>T', '<cmd>tabclose<CR>')
+
+vim.keymap.set('n', '<leader><leader>', '<C-^>') -- Switch to previous buffer

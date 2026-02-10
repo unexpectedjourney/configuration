@@ -22,6 +22,7 @@ Leader key: `\`
 
 | Key | Mode | Action |
 |-----|------|--------|
+| `\\` | Normal | Switch to previous buffer |
 | `\w` | Normal | Delete buffer |
 
 ## Clipboard (OSC52)
