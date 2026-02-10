@@ -27,5 +27,11 @@ vim.opt.signcolumn = 'yes'                         -- Show sign column
 vim.opt.wrap = false                               -- Disable line wrap
 vim.opt.swapfile = false
 vim.opt.backup = false
-vim.opt.clipboard = { "unnamed", "unnamedplus" }
+
+-- Black hole deletes: d/D/x/c never overwrite the yank register
+for _, mode in ipairs({ 'n', 'v', 'x' }) do
+    for _, key in ipairs({ 'd', 'D', 'x', 'c', 'C' }) do
+        vim.keymap.set(mode, key, '"_' .. key)
+    end
+end
 

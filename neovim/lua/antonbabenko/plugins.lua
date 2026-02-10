@@ -153,7 +153,7 @@ require("lazy").setup({
 				map("n", "<space>m", vim.lsp.buf.rename, opts)
 				map("n", "<space>r", vim.lsp.buf.references, opts)
 				map("n", "<space>s", vim.lsp.buf.document_symbol, opts)
-				map("n", "<leader>f", vim.lsp.buf.format, opts)
+				map("n", "<space>f", vim.lsp.buf.format, opts)
 			end
 
 			-- 3. servers ---------------------------------------------------------
@@ -303,6 +303,34 @@ require("lazy").setup({
 		"ojroques/nvim-hardline",
 		config = function()
 			require("hardline").setup({})
+		end,
+	},
+
+	---------------------------------------------------------------------
+	-- Clipboard (OSC52) ------------------------------------------------
+	---------------------------------------------------------------------
+	{
+		"ojroques/nvim-osc52",
+		config = function()
+			require("osc52").setup({ trim = true })
+
+			local function copy(lines, _)
+				require("osc52").copy(table.concat(lines, "\n"))
+			end
+
+			local function paste()
+				return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+			end
+
+			vim.g.clipboard = {
+				name = "osc52",
+				copy = { ["+"] = copy, ["*"] = copy },
+				paste = { ["+"] = paste, ["*"] = paste },
+			}
+
+			vim.keymap.set("n", "<leader>c", '"+y')
+			vim.keymap.set("n", "<leader>cc", '"+yy')
+			vim.keymap.set("v", "<leader>c", require("osc52").copy_visual)
 		end,
 	},
 })
